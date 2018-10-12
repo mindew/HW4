@@ -1,0 +1,4 @@
+iverilog regfile.v
+iverilog regfile.t.v
+./a.out
+
