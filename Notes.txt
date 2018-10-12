@@ -1,0 +1,11 @@
+Notes
+
+- The 32 element x 32 bit register file has two read ports and one write port. 
+- Read port --> takes 5 bit address inputs (addr0, addr1) 
+	- addr0 and addr1 read the 32-bit register one of 2^5 = 32 registers for source
+
+- They read 32 bit register values onto read data outputs RD1, and RD2. 
+- The write port takes a 5-bit address input, A3; a 32-bit write data input WD
+= If the write enable (WE == 1), write data WD into address A @posedge
+- If the address changes, the new data appears at RD after some propagation delay; no clock is involved. 
+- They are written only on the posedge of the clock. 

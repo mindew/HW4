@@ -142,7 +142,74 @@ output reg		Clk
   end
 
 
-  // All done!  Wait a moment and signal test completion.
+  // Test Case 3:
+  // Write '15' to register 2 with write enable is broken / ignored
+  WriteRegister = 5'd2;
+  WriteData = 32'd15;
+  RegWrite = 0;
+  ReadRegister1 = 5'd2;
+  ReadRegister2 = 5'd2;
+  #5 Clk = 1; #5 Clk = 0;
+
+  if((ReadData1 !== WriteData) || (ReadData2 !== WriteData)) begin
+    dutpassed = 0;
+    $display("Test Case 3 Failed");
+  end
+
+  // Test Case 4:
+  // All registers are written to - decoder is broken
+  WriteRegister = 5'd0;
+  WriteData = 32'd15;
+  RegWrite = 1;
+  ReadRegister1 = 5'd2;
+  ReadRegister2 = 5'd2;
+  #5 Clk = 1; #5 Clk = 0;
+
+  if((ReadRegister1 != WriteRegister || ReadRegister2 != WriteRegister) && (ReadData1 == WriteData && ReadData2 == WriteData)) begin
+    // If one of the read register doesn't have write enabled but still have write data, raise the flag
+    dutpassed = 0;
+    $display("Test Case 4 Failed");
+  end
+
+  // Test Case 5: 
+  // Register Zero is actually a register instead of the constant value 0
+  WriteRegister = 5'd0;
+  WriteData = 32'd15;
+  RegWrite = 1;
+  ReadRegister1 = 5'd0;
+  ReadRegister2 = 5'd0;
+  #5 Clk = 1; #5 Clk = 0;
+
+  // first bit of each data should be 0 - raise the flag if it isn't
+  if(ReadData1 != 0 || ReadData2 != 0) begin
+    dutpassed = 0;
+    $display("Test Case 5 Failed");
+  end
+
+  // Test Case 6: 
+  // Any port is broken and always read register 14 (for example)
+  WriteRegister = 5'd1;
+  WriteData = 32'd1;
+  RegWrite = 1;
+  ReadRegister1 = 5'd1;
+  ReadRegister2 = 5'd1;
+  #5 Clk = 1; #5 Clk = 0;
+
+  if((ReadData1 !== 1)&&(ReadData2 !== 1)) begin
+    dutpassed = 0;
+    $display("Test Case 6 Failed");
+  end
+
+  if((ReadData1 == 1)&&(ReadData2 !== 1)) begin
+    dutpassed = 0;
+    $display("Test Case 7 Failed");
+  end
+
+  if((ReadData1 !== 1)&&(ReadData2 == 1)) begin
+    dutpassed = 0;
+    $display("Test Case 8 Failed");
+  end
+
   #5
   endtest = 1;
 
